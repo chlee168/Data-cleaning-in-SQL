@@ -1,5 +1,3 @@
-select * from dbo.usedcar
-
 --Change the name of the table
 EXEC sp_rename ['Used Car Dataset$'], 'usedcar';
 
@@ -33,11 +31,9 @@ EXEC sp_rename 'dbo.usedcar.price(in lakhs)', 'price', 'COLUMN';
 ALTER TABLE dbo.usedcar
 ALTER COLUMN price DECIMAL(18, 2);
 
-
 UPDATE dbo.usedcar
 SET price = price* 100000
 
-select replace(format(price *100000,'c'),',000.00','k') from dbo.usedcar
 
 --Format the "ownsership" column and uncertain value 
 EXEC sp_rename 'dbo.usedcar.ownsership', 'ownership', 'COLUMN';
@@ -49,10 +45,16 @@ set ownership =
 		 when ownership = 'Third Owner' then '3rd'
 		 else 'not sure' end
 
-select *
-from dbo.usedcar
+--Rename columns
+EXEC sp_rename 'dbo.usedcar.mileage(kmpl)', 'mileage_kmpl', 'COLUMN';
+EXEC sp_rename 'dbo.usedcar.engine(cc)', 'engine_cc', 'COLUMN';
+EXEC sp_rename 'dbo.usedcar.max_power(bhp)', 'max_power', 'COLUMN';
+EXEC sp_rename 'dbo.usedcar.mileage(kmpl)', 'mileage_kmpl', 'COLUMN';
+EXEC sp_rename 'dbo.usedcar.torque(Nm)', 'torque_Nm', 'COLUMN';
 
-
+--Get rid of unnecessary columns
+alter table dbo.usedcar
+drop column car_name,registration_year,manufacturing_year
 
 --Check if there are duplicates
 select distinct car_brand,car_model 
